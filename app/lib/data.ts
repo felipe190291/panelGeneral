@@ -5,7 +5,7 @@ const { QueryTypes } = require("sequelize");
 require("dotenv").config();
 
 export async function fetchRevenue() {
-  const apiUrl = `http://localhost:3000/api/customer`;
+  const apiUrl = `https://panel-general--bice.vercel.app/api/customer`;
   try {
     // Artificially delay a response for demo purposes.
     // Don't do this in production :)
@@ -25,7 +25,7 @@ export async function fetchRevenue() {
   }
 }
 export async function fetchOrders() {
-  const apiUrl = `http://localhost:3000/api/order`;
+  const apiUrl = `https://panel-general--bice.vercel.app/api/order`;
   try {
     // Artificially delay a response for demo purposes.
     // Don't do this in production :)
@@ -44,7 +44,7 @@ export async function fetchOrders() {
   }
 }
 export async function fetchProducts() {
-  const apiUrl = `http://localhost:3000/api/product`;
+  const apiUrl = `https://panel-general--bice.vercel.app/api/product`;
   try {
     // Artificially delay a response for demo purposes.
     // Don't do this in production :)
@@ -63,7 +63,7 @@ export async function fetchProducts() {
   }
 }
 export async function fetchPutAll(dataCustomer: any, item: any) {
-  const apiUrl = `http://localhost:3000/api/${item}`; // Cambia esto según la URL de tu API
+  const apiUrl = `https://panel-general--bice.vercel.app/api/${item}`; // Cambia esto según la URL de tu API
   try {
     const response = await fetch(apiUrl, {
       method: "PATCH",
@@ -157,7 +157,7 @@ export async function fetchCustomerById(id: number | string): Promise<Product> {
   }
 }
 export async function postAll(dataorder: any, page: string) {
-  const apiUrl = `http://localhost:3000/api/${page}`;
+  const apiUrl = `https://panel-general--bice.vercel.app/api/${page}`;
   try {
     // Artificially delay a response for demo purposes.
     // Don't do this in production :)
@@ -180,7 +180,7 @@ export async function postAll(dataorder: any, page: string) {
 }
 
 export async function fetchDelete(id: any, tableRef: string) {
-  const apiUrl = `http://localhost:3000/api/${
+  const apiUrl = `https://panel-general--bice.vercel.app/api/${
     tableRef === "customers"
       ? "customer"
       : tableRef === "products"
