@@ -1,13 +1,29 @@
-'use client';
-import React, { useState } from 'react';
-import Pie, { ProvidedProps, PieArcDatum } from '@visx/shape/lib/shapes/Pie';
-import { scaleOrdinal } from '@visx/scale';
-import { Group } from '@visx/group';
-import { GradientPinkBlue } from '@visx/gradient';
-import letterFrequency, { LetterFrequency } from '@visx/mock-data/lib/mocks/letterFrequency';
-import browserUsage, { BrowserUsage as Browsers } from '@visx/mock-data/lib/mocks/browserUsage';
-import { animated, useTransition, interpolate } from '@react-spring/web';
+"use client";
+import React, { useCallback, useState } from "react";
+import Pie, { ProvidedProps, PieArcDatum } from "@visx/shape/lib/shapes/Pie";
+import { scaleOrdinal } from "@visx/scale";
+import { Group } from "@visx/group";
+import { GradientPinkBlue } from "@visx/gradient";
+import letterFrequency, {
+  LetterFrequency,
+} from "@visx/mock-data/lib/mocks/letterFrequency";
+import {
+  Tooltip,
+  TooltipWithBounds,
+  useTooltip,
+  useTooltipInPortal,
+  defaultStyles,
+} from "@visx/tooltip";
 
+import { animated, useTransition, to } from "@react-spring/web";
+import { localPoint } from "@visx/event";
+interface Browsers {
+  date: string;
+  pending: string;
+  on_route: string;
+  delivered: string;
+  cancelled: string;
+}
 // data and types
 type BrowserNames = keyof Browsers;
 
@@ -16,12 +32,17 @@ interface BrowserUsage {
   usage: number;
 }
 
-const letters: LetterFrequency[] = letterFrequency.slice(0, 4);
-const browserNames = Object.keys(browserUsage[0]).filter((k) => k !== 'date') as BrowserNames[];
-const browsers: BrowserUsage[] = browserNames.map((name) => ({
-  label: name,
-  usage: Number(browserUsage[0][name]),
-}));
+// const letters: LetterFrequency[] = letterFrequency.slice(0, 4);
+const browserNames = [
+  "pending",
+  "on_route",
+  "delivered",
+  "cancelled",
+] as BrowserNames[];
+// const browsers: BrowserUsage[] = browserNames.map((name) => ({
+//   label: name,
+//   usage: Number(browserUsage[0][name]),
+// }));
 
 // accessor functions
 const usage = (d: BrowserUsage) => d.usage;
@@ -31,18 +52,14 @@ const frequency = (d: LetterFrequency) => d.frequency;
 const getBrowserColor = scaleOrdinal({
   domain: browserNames,
   range: [
-    'rgba(255,255,255,0.7)',
-    'rgba(255,255,255,0.6)',
-    'rgba(255,255,255,0.5)',
-    'rgba(255,255,255,0.4)',
-    'rgba(255,255,255,0.3)',
-    'rgba(255,255,255,0.2)',
-    'rgba(255,255,255,0.1)',
+    "rgba(255,255,255,0.7)",
+    "rgba(255,255,255,0.6)",
+    "rgba(255,255,255,0.5)",
+    "rgba(255,255,255,0.4)",
+    "rgba(255,255,255,0.3)",
+    "rgba(255,255,255,0.2)",
+    "rgba(255,255,255,0.1)",
   ],
-});
-const getLetterFrequencyColor = scaleOrdinal({
-  domain: letters.map((l) => l.letter),
-  range: ['rgba(93,30,91,1)', 'rgba(93,30,91,0.8)', 'rgba(93,30,91,0.6)', 'rgba(93,30,91,0.4)'],
 });
 
 const defaultMargin = { top: 20, right: 20, bottom: 20, left: 20 };
@@ -52,6 +69,10 @@ export type PieProps = {
   height: number;
   margin?: typeof defaultMargin;
   animate?: boolean;
+  paid: any;
+  pending: any;
+  cancel: any;
+  onRoute: any;
 };
 
 export default function Donut({
@@ -59,9 +80,42 @@ export default function Donut({
   height,
   margin = defaultMargin,
   animate = true,
+  paid,
+  pending,
+  cancel,
+  onRoute,
 }: PieProps) {
+  const {
+    tooltipData,
+    tooltipLeft,
+    tooltipTop,
+    tooltipOpen,
+    showTooltip,
+    hideTooltip,
+  } = useTooltip<string>();
+
+  const { containerRef, TooltipInPortal } = useTooltipInPortal({
+    detectBounds: true,
+    scroll: true,
+  });
+
+  const handlePointerMove = (event: any, datum: any) => {
+    const coords = localPoint(event.target.ownerSVGElement, event);
+
+    let dato = datum;
+
+    console.log(datum);
+
+    showTooltip({
+      tooltipLeft: coords?.x,
+      tooltipTop: coords?.y,
+      tooltipData: dato,
+    });
+  };
   const [selectedBrowser, setSelectedBrowser] = useState<string | null>(null);
-  const [selectedAlphabetLetter, setSelectedAlphabetLetter] = useState<string | null>(null);
+  const [selectedAlphabetLetter, setSelectedAlphabetLetter] = useState<
+    string | null
+  >(null);
 
   if (width < 10) return null;
 
@@ -71,15 +125,77 @@ export default function Donut({
   const centerY = innerHeight / 2;
   const centerX = innerWidth / 2;
   const donutThickness = 50;
+  let totalOrders = paid + pending + cancel + onRoute;
+  function arrowDirection(data: any) {
+    console.log("------", data);
+  }
 
+  let datPanel: BrowserUsage[] = [
+    {
+      label: "pending",
+      usage: (pending * 100) / totalOrders,
+    },
+    {
+      label: "on_route",
+      usage: (onRoute * 100) / totalOrders,
+    },
+    {
+      label: "delivered",
+      usage: (paid * 100) / totalOrders,
+    },
+    {
+      label: "cancelled",
+      usage: (cancel * 100) / totalOrders,
+    },
+  ];
+  let letters: LetterFrequency[] = [
+    {
+      letter: "pending",
+      frequency: pending / totalOrders,
+    },
+    {
+      letter: "on_route",
+      frequency: onRoute / totalOrders,
+    },
+    {
+      letter: "delivered",
+      frequency: paid / totalOrders,
+    },
+    {
+      letter: "cancelled",
+      frequency: cancel / totalOrders,
+    },
+  ];
+  const getLetterFrequencyColor = scaleOrdinal({
+    domain: letters.map((l) => l.letter),
+    range: [
+      "rgba(93,30,1,0.6)",
+      "rgba(1,30,31,0.5)",
+      "rgba(93,30,91,0.6)",
+      "rgba(13,10,91,0.4)",
+    ],
+  });
+ 
   return (
-    <svg width={width} height={height}>
+    <svg
+      ref={containerRef}
+      width={width}
+      height={height}
+      onPointerOut={hideTooltip}
+    >
       <GradientPinkBlue id="visx-pie-gradient" />
-      <rect rx={14} width={width} height={height} fill="url('#visx-pie-gradient')" />
+      <rect
+        rx={14}
+        width={width}
+        height={height}
+        fill="url('#visx-pie-gradient')"
+      />
       <Group top={centerY + margin.top} left={centerX + margin.left}>
         <Pie
           data={
-            selectedBrowser ? browsers.filter(({ label }) => label === selectedBrowser) : browsers
+            selectedBrowser
+              ? datPanel.filter(({ label }) => label === selectedBrowser)
+              : datPanel
           }
           pieValue={usage}
           outerRadius={radius}
@@ -94,16 +210,38 @@ export default function Donut({
               getKey={(arc) => arc.data.label}
               onClickDatum={({ data: { label } }) =>
                 animate &&
-                setSelectedBrowser(selectedBrowser && selectedBrowser === label ? null : label)
+                setSelectedBrowser(
+                  selectedBrowser && selectedBrowser === label ? null : label
+                )
               }
               getColor={(arc) => getBrowserColor(arc.data.label)}
             />
           )}
         </Pie>
+        {/* Tooltip */}
+        {tooltipOpen && tooltipData && (
+          <TooltipInPortal
+            // set this to random so it correctly updates with parent bounds
+            className="portalEvents"
+            top={tooltipTop}
+            left={tooltipLeft}
+          >
+            <div
+              className="d-flex text-gray-500"
+              style={{ lineHeight: "1" }}
+              onMouseLeave={() => hideTooltip()}
+            >
+              <b> {tooltipData==='pending' ?Math.round((pending * 100) / totalOrders)  + ' %' : tooltipData==='on_route' ? Math.round((onRoute * 100) / totalOrders) + ' %' : tooltipData==='delivered' ?  Math.round((paid * 100) / totalOrders) + ' %' : Math.round((cancel * 100) / totalOrders) + ' %'}</b>
+            </div>
+          </TooltipInPortal>
+        )}
+
         <Pie
           data={
             selectedAlphabetLetter
-              ? letters.filter(({ letter }) => letter === selectedAlphabetLetter)
+              ? letters.filter(
+                  ({ letter }) => letter === selectedAlphabetLetter
+                )
               : letters
           }
           pieValue={frequency}
@@ -111,18 +249,40 @@ export default function Donut({
           outerRadius={radius - donutThickness * 1.3}
         >
           {(pie) => (
-            <AnimatedPie<LetterFrequency>
-              {...pie}
-              animate={animate}
-              getKey={({ data: { letter } }) => letter}
-              onClickDatum={({ data: { letter } }) =>
-                animate &&
-                setSelectedAlphabetLetter(
-                  selectedAlphabetLetter && selectedAlphabetLetter === letter ? null : letter,
-                )
-              }
-              getColor={({ data: { letter } }) => getLetterFrequencyColor(letter)}
-            />
+            <>
+              <AnimatedPie<LetterFrequency>
+                {...pie}
+                animate={animate}
+                getKey={({ data: { letter } }) => letter}
+                onClickDatum={({ data: { letter } }) =>
+                  animate &&
+                  setSelectedAlphabetLetter(
+                    selectedAlphabetLetter && selectedAlphabetLetter === letter
+                      ? null
+                      : letter
+                  )
+                }
+                getColor={({ data: { letter } }) =>
+                  getLetterFrequencyColor(letter)
+                }
+              />
+              {pie.arcs.map((arc, i) => {
+                const opacity = 1 / (i + 2);
+
+                return (
+                  <g key={`letters-${arc.data.letter}-${i}`}>
+                    <path
+                      d={pie.path(arc) ?? ""}
+                      fill={"#fff"}
+                      fillOpacity={opacity}
+                      onMouseEnter={(e) =>
+                        handlePointerMove(e, arc.data.letter)
+                      }
+                    />
+                  </g>
+                );
+              })}
+            </>
           )}
         </Pie>
       </Group>
@@ -181,7 +341,7 @@ function AnimatedPie<Datum>({
     leave: animate ? fromLeaveTransition : enterUpdateTransition,
     keys: getKey,
   });
-  return transitions((props:any, arc:any, { key }: { key: any }) => {
+  return transitions((props: any, arc: any, { key }: { key: any }) => {
     const [centroidX, centroidY] = path.centroid(arc);
     const hasSpaceForLabel = arc.endAngle - arc.startAngle >= 0.1;
 
@@ -189,12 +349,14 @@ function AnimatedPie<Datum>({
       <g key={key}>
         <animated.path
           // compute interpolated path d attribute from intermediate angle values
-          d={interpolate([props.startAngle, props.endAngle], (startAngle:any, endAngle:any) =>
-            path({
-              ...arc,
-              startAngle,
-              endAngle,
-            }),
+          d={to(
+            [props.startAngle, props.endAngle],
+            (startAngle: any, endAngle: any) =>
+              path({
+                ...arc,
+                startAngle,
+                endAngle,
+              })
           )}
           fill={getColor(arc)}
           onClick={() => onClickDatum(arc)}

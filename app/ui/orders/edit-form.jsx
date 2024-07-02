@@ -217,7 +217,7 @@ export default function Form({ customers, products, dataId }) {
         >
           Cancel
         </Link>
-        <Button type="submit">Create order</Button>
+        <Button type="submit">Edit order</Button>
       </div>
     </form>
   );

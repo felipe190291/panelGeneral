@@ -1,7 +1,7 @@
 import Image from "next/image";
 import { UpdateInvoice } from "@/app/ui/orders/buttons";
 import { formatCurrency, formatDateToLocal } from "@/app/lib/utils";
-import {  fetchFilteredProducts } from "@/app/lib/data";
+import { fetchFilteredProducts } from "@/app/lib/data";
 import { Customer, Product } from "@/app/lib/definitions";
 import DeleteInvoice from "@/app/ui/orders/deletedButton.jsx";
 import Modal from "@/app/ui/modal.jsx";
@@ -15,7 +15,7 @@ export default async function CustomersTable({
   deleteId: string;
 }) {
   const products = await fetchFilteredProducts(query, currentPage);
-  console.log(products)
+
   return (
     <div className="mt-6 flow-root">
       <div className="inline-block min-w-full align-middle">
@@ -31,12 +31,16 @@ export default async function CustomersTable({
                     <div className="mb-2 flex items-center">
                       <p>{product.name}</p>
                     </div>
-                    <p className="text-sm text-gray-500">{formatCurrency(product.price)}</p>
+                    <p className="text-sm text-gray-500">
+                      {formatCurrency(product.price)}
+                    </p>
                   </div>
                 </div>
                 <div className="flex w-full items-center justify-between pt-4">
                   <div>
-                    <p className="text-xl font-medium">{formatDateToLocal(product.createdAt)}</p>
+                    <p className="text-xl font-medium">
+                      {formatDateToLocal(product.createdAt)}
+                    </p>
                     <p>{product.quantity}</p>
                   </div>
                   <div className="flex justify-end gap-2">
@@ -63,12 +67,12 @@ export default async function CustomersTable({
                   Price
                 </th>
                 <th scope="col" className="px-3 py-5 font-medium">
-                 Quantity
+                  Quantity
                 </th>
                 <th scope="col" className="px-3 py-5 font-medium">
-                Created Date
+                  Created Date
                 </th>
-               
+
                 <th scope="col" className="relative py-3 pl-6 pr-3">
                   <span className="sr-only">Edit</span>
                 </th>
@@ -82,7 +86,6 @@ export default async function CustomersTable({
                 >
                   <td className="whitespace-nowrap py-3 pl-6 pr-3">
                     <div className="flex items-center gap-3">
-                    
                       <p>{product.id}</p>
                     </div>
                   </td>
@@ -96,9 +99,11 @@ export default async function CustomersTable({
                     {product.quantity}
                   </td>
                   <td className="whitespace-nowrap px-3 py-3">
-                    <p className={"hidden sm:block"}>{formatDateToLocal(product.createdAt)}</p>
+                    <p className={"hidden sm:block"}>
+                      {formatDateToLocal(product.createdAt)}
+                    </p>
                   </td>
-                  
+
                   <td className="whitespace-nowrap py-3 pl-1 pr-3">
                     <div className="flex justify-start gap-3">
                       <UpdateInvoice id={product.id} reference={"products"} />

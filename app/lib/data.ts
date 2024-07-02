@@ -5,7 +5,6 @@ const { QueryTypes } = require("sequelize");
 require("dotenv").config();
 
 export async function fetchRevenue() {
-  console.log('---------------',process.env.NEXT_PUBLIC_API_URL); 
   const apiUrl = `${process.env.NEXT_PUBLIC_API_URL}/api/customer`;
   try {
     // Artificially delay a response for demo purposes.
@@ -210,7 +209,7 @@ export async function fetchDelete(id: any, tableRef: string) {
     throw new Error("Failed to fetch revenue data.");
   }
 }
-type DataResponse = [any, any, any];
+type DataResponse = [any, any, any, any, any, any, any];
 export async function fetchCardData() {
   try {
     const invoiceCountPromise = sequelize.query(`SELECT COUNT(*) FROM Orders`, {
@@ -239,29 +238,63 @@ GROUP BY
         type: QueryTypes.SELECT,
       }
     );
+    const order_pending = sequelize.query(
+      `SELECT COUNT(*) FROM Orders o WHERE o.order_status = 'pending' `,
+      {
+        type: QueryTypes.SELECT,
+      }
+    );
+    const order_canceled = sequelize.query(
+      `SELECT COUNT(*) FROM Orders o WHERE o.order_status = 'cancelled' `,
+      {
+        type: QueryTypes.SELECT,
+      }
+    );
+    const order_on_route = sequelize.query(
+      `SELECT COUNT(*) FROM Orders o WHERE o.order_status = 'on_route' `,
+      {
+        type: QueryTypes.SELECT,
+      }
+    );
+    const order_delivered = sequelize.query(
+      `SELECT COUNT(*) FROM Orders o WHERE o.order_status = 'delivered' `,
+      {
+        type: QueryTypes.SELECT,
+      }
+    );
     const data: DataResponse = await Promise.all([
       invoiceCountPromise,
       customerCountPromise,
       invoiceStatusPromise,
+      order_pending,
+      order_delivered,
+      order_canceled,
+      order_on_route,
     ]);
-
     const numberOfOrders = data[0][0] ? data[0][0]["COUNT(*)"] : 0;
     const numberOfCustomers = data[1][0] ? data[1][0]["COUNT(*)"] : 0;
-    const totalDelivered = data[2].reduce((sum:any, item:any) => {
+    const totalDelivered = data[2].reduce((sum: any, item: any) => {
       return sum + parseFloat(item.delivered);
     }, 0);
-const totalPending = data[2].reduce((sum:any, item:any) => {
-  return sum + parseFloat(item.pending);  
-},0);
+    const totalPending = data[2].reduce((sum: any, item: any) => {
+      return sum + parseFloat(item.pending);
+    }, 0);
     const totalPaidOrders = formatCurrency(totalDelivered);
-
     const totalPendingOrders = formatCurrency(totalPending);
+    const totalPendingNumber = data[3][0] ? data[3][0]["COUNT(*)"] : 0;
+    const totalDeliveredOrders = data[4][0] ? data[4][0]["COUNT(*)"] : 0;
+    const totalCanceled = data[5][0] ? data[5][0]["COUNT(*)"] : 0;
+    const totalOnRoute = data[6][0] ? data[6][0]["COUNT(*)"] : 0;
 
     return {
       numberOfOrders,
       numberOfCustomers,
       totalPaidOrders,
       totalPendingOrders,
+      totalPendingNumber,
+      totalDeliveredOrders,
+      totalCanceled,
+      totalOnRoute,
     };
   } catch (error) {
     throw new Error("Failed to fetch card data.");
@@ -297,11 +330,12 @@ export async function fetchFilteredOrders(
      JOIN OrderProducts op ON o.id = op.orderId
      JOIN products p ON op.productId = p.id
      WHERE c.name LIKE ?
+     OR o.order_status LIKE ?
      ORDER BY o.order_date DESC
      LIMIT ?
      OFFSET ?`,
       {
-        replacements: [`%${query}%`, ITEMS_PER_PAGE, offset],
+        replacements: [`%${query}%`, `%${query}%`, ITEMS_PER_PAGE, offset],
         type: QueryTypes.SELECT,
       }
     );

@@ -11,7 +11,7 @@ import DonutPreload from "./donutClient";
 // https://www.chartjs.org/
 // https://airbnb.io/visx/
 
-export default async function RevenueChart() {
+export default async function RevenueChart({paid, pending,cancel, onRoute}: {paid: any, pending: any,cancel: any, onRoute: any}) {
   const revenue = await fetchRevenue();
   const chartHeight = 430;
   // NOTE: comment in this code when you get to this point in the course
@@ -34,7 +34,7 @@ export default async function RevenueChart() {
             className="flex-col justify-between text-sm text-gray-400 sm:flex"
             style={{ height: `${chartHeight}px` }}
           >
-            <DonutPreload />
+            <DonutPreload paid={paid} pending={pending} cancel={cancel} onRoute={onRoute} />
           </div>
         </div>
         <div className="hidden md:flex items-center pb-2 pt-2 md:pt-0">

@@ -15,6 +15,10 @@ export default async function Dashboard() {
     numberOfCustomers,
     totalPaidOrders,
     totalPendingOrders,
+    totalPendingNumber,
+    totalDeliveredOrders,
+    totalCanceled,
+    totalOnRoute,
   } = await fetchCardData();
   return (
     <main>
@@ -34,7 +38,7 @@ export default async function Dashboard() {
       </div>
       <div className="mt-6 grid grid-cols-1 gap-6 md:grid-cols-4 lg:grid-cols-8">
         <Suspense fallback={<RevenueChartSkeleton />}>
-          <RevenueChart />
+          <RevenueChart paid={totalDeliveredOrders} pending ={totalPendingNumber} cancel={totalCanceled} onRoute={totalOnRoute}  />
         </Suspense>
         <Suspense fallback={<LatestInvoicesSkeleton />}>
           <LatestInvoices />
