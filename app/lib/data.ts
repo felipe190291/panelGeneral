@@ -5,7 +5,8 @@ const { QueryTypes } = require("sequelize");
 require("dotenv").config();
 
 export async function fetchRevenue() {
-  const apiUrl = `https://panel-general--bice.vercel.app/api/customer`;
+  console.log('---------------',process.env.NEXT_PUBLIC_API_URL); 
+  const apiUrl = `${process.env.NEXT_PUBLIC_API_URL}/api/customer`;
   try {
     // Artificially delay a response for demo purposes.
     // Don't do this in production :)
@@ -25,7 +26,7 @@ export async function fetchRevenue() {
   }
 }
 export async function fetchOrders() {
-  const apiUrl = `https://panel-general--bice.vercel.app/api/order`;
+  const apiUrl = `${process.env.NEXT_PUBLIC_API_URL}/api/order`;
   try {
     // Artificially delay a response for demo purposes.
     // Don't do this in production :)
@@ -44,7 +45,7 @@ export async function fetchOrders() {
   }
 }
 export async function fetchProducts() {
-  const apiUrl = `https://panel-general--bice.vercel.app/api/product`;
+  const apiUrl = `${process.env.NEXT_PUBLIC_API_URL}/api/product`;
   try {
     // Artificially delay a response for demo purposes.
     // Don't do this in production :)
@@ -63,7 +64,7 @@ export async function fetchProducts() {
   }
 }
 export async function fetchPutAll(dataCustomer: any, item: any) {
-  const apiUrl = `https://panel-general--bice.vercel.app/api/${item}`; // Cambia esto según la URL de tu API
+  const apiUrl = `${process.env.NEXT_PUBLIC_API_URL}/api/${item}`; // Cambia esto según la URL de tu API
   try {
     const response = await fetch(apiUrl, {
       method: "PATCH",
@@ -157,7 +158,7 @@ export async function fetchCustomerById(id: number | string): Promise<Product> {
   }
 }
 export async function postAll(dataorder: any, page: string) {
-  const apiUrl = `https://panel-general--bice.vercel.app/api/${page}`;
+  const apiUrl = `${process.env.NEXT_PUBLIC_API_URL}/api/${page}`;
   try {
     // Artificially delay a response for demo purposes.
     // Don't do this in production :)
@@ -180,7 +181,7 @@ export async function postAll(dataorder: any, page: string) {
 }
 
 export async function fetchDelete(id: any, tableRef: string) {
-  const apiUrl = `https://panel-general--bice.vercel.app/api/${
+  const apiUrl = `${process.env.NEXT_PUBLIC_API_URL}/api/${
     tableRef === "customers"
       ? "customer"
       : tableRef === "products"
@@ -266,7 +267,7 @@ const totalPending = data[2].reduce((sum:any, item:any) => {
     throw new Error("Failed to fetch card data.");
   }
 }
-const ITEMS_PER_PAGE = 7;
+const ITEMS_PER_PAGE = 6;
 export async function fetchFilteredOrders(
   query: string,
   currentPage: number
@@ -327,7 +328,7 @@ export async function fetchFilteredCustomers(
      WHERE c.name LIKE ?
      OR c.email LIKE ?
        OR c.city LIKE ?
-     ORDER BY c.createdAt DESC
+     ORDER BY c.id DESC
      LIMIT ?
      OFFSET ?`,
       {
@@ -360,11 +361,11 @@ export async function fetchFilteredProducts(
   try {
     const orders = await sequelize.query(
       `SELECT *
-   FROM products p
+   FROM products p 
      WHERE p.name LIKE ?
      OR p.price LIKE ?
        OR p.quantity LIKE ?
-     ORDER BY p.createdAt DESC
+     ORDER BY p.id DESC
      LIMIT ?
      OFFSET ?`,
       {

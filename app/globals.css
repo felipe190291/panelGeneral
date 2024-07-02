@@ -31,3 +31,8 @@ body {
     text-wrap: balance;
   }
 }
+
+.changerColor {
+  background-color: rgb(29, 33, 38);
+  color: rgb(102, 178, 255);
+}

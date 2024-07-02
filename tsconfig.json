@@ -23,6 +23,6 @@
       "@/*": ["./*"], 
     }
   },
-  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts", "app/ui/orders/create-form.jsx", "app/ui/orders/deletedButton.jsx"],
+  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts", "app/ui/orders/create-form.jsx", "app/ui/orders/deletedButton.jsx", "app/ui/dashboard/revenue-chart.tsx"],
   "exclude": ["node_modules"]
 }

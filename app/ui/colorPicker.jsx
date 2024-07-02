@@ -32,20 +32,27 @@ const ColorPicker = () => {
 
   useEffect(() => {
     // Cambiar el color del tema después de 3 segundos
-    let selectedChanger = document.querySelector(".changerColor");
+    let selectedChanger = document.querySelectorAll(".changerColor");
     let selectedChangerInside = document.querySelectorAll(".darki");
     if (selectedChanger) {
-      selectedChanger.style.backgroundColor = color;
-      if(selectedChangerInside){
-
+      selectedChanger.forEach((element) => {
+        element.style.backgroundColor = color;
+        element.style.color =
+          color === "rgba(29,33,38,1)"
+            ? `rgb(102, 178, 255)`
+            : `rgba(15,18,20,0.68)`;
+      });
+      if (selectedChangerInside) {
         selectedChangerInside.forEach((element) => {
           element.style.backgroundColor = colorSecondary;
-          element.style.color = color === "rgba(29,33,38,1)" ? `rgb(102, 178, 255)` : `rgba(15,18,20,0.68)`
-        })
+          element.style.color =
+            color === "rgba(29,33,38,1)"
+              ? `rgb(102, 178, 255)`
+              : `rgba(15,18,20,0.68)`;
+        });
       }
-      
-      }
-    selectedChanger.style.color = color === "rgba(29,33,38,1)" ? `rgb(102, 178, 255)` : `rgba(15,18,20,0.68)`
+    }
+   
   }, [color]);
 
   return (

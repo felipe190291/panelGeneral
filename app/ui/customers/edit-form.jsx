@@ -173,7 +173,7 @@ export default function Form({ dataAll, dataId }) {
         >
           Cancel
         </Link>
-        <Button type="submit">Create customer</Button>
+        <Button type="submit">Edit customer</Button>
       </div>
     </form>
   );
