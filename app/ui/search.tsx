@@ -1,14 +1,17 @@
 'use client';
 
 import { MagnifyingGlassIcon } from '@heroicons/react/24/outline';
-import { pages } from 'next/dist/build/templates/app-page';
 import { usePathname, useSearchParams,useRouter } from 'next/navigation';
 import { useDebouncedCallback } from 'use-debounce';
+import { useUIStore } from '../store/ui-store';
+import { useEffect } from 'react';
 export default function Search({ placeholder }: { placeholder: string }) {
 const searchParams=useSearchParams();
 const pathname=usePathname();
 const {replace}=useRouter();
-
+const router = useRouter();
+const run = useUIStore((state) => state.run);
+const setStepIndex = useUIStore((state) => state.setStepIndex);
 const handleSearch = useDebouncedCallback((term:string) => {
     const params = new URLSearchParams(searchParams);
     if (term) {
@@ -19,6 +22,15 @@ const handleSearch = useDebouncedCallback((term:string) => {
     params.set('page', '1');
     replace(`${pathname}?${params.toString()}`);
   }, 300);
+
+  useEffect(() => {
+    if (run) {
+
+     setStepIndex(2);
+      
+    }
+  }, []);
+  
   
   return (
     <div className="relative flex flex-1 flex-shrink-0">

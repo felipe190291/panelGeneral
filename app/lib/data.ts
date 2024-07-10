@@ -303,9 +303,10 @@ GROUP BY
 const ITEMS_PER_PAGE = 6;
 export async function fetchFilteredOrders(
   query: string,
-  currentPage: number
+  currentPage: number,email:string
 ): Promise<Order[]> {
   const offset = (currentPage - 1) * ITEMS_PER_PAGE;
+  console.log('como vas',query?'si exsite':'noexiste',email);
 
   try {
     const orders = await sequelize.query(
@@ -330,12 +331,14 @@ export async function fetchFilteredOrders(
      JOIN OrderProducts op ON o.id = op.orderId
      JOIN products p ON op.productId = p.id
      WHERE c.name LIKE ?
+     OR c.email LIKE ?
      OR o.order_status LIKE ?
+    
      ORDER BY o.order_date DESC
      LIMIT ?
      OFFSET ?`,
       {
-        replacements: [`%${query}%`, `%${query}%`, ITEMS_PER_PAGE, offset],
+        replacements: [`%${query?query:email}%`, `%${query?query:email}%`, `%${query?query:email}%`, ITEMS_PER_PAGE, offset],
         type: QueryTypes.SELECT,
       }
     );
@@ -343,7 +346,7 @@ export async function fetchFilteredOrders(
       throw new Error("No data returned from query.");
     }
     const invoices: Order[] = (orders as any[]) || [];
-
+    console.log('-------invoices',invoices)
     return invoices;
   } catch (error) {
     throw new Error("Failed to fetch invoices.");

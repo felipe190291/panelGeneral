@@ -18,7 +18,7 @@ export default async function Customers({
   const totalPages = await fetchCustomersPages(query);
 
   return (
-    <div className="w-full changerColor">
+    <div className="w-full changerColor" id={`customers`}>
       <div className="flex w-full items-center justify-between">
         <h1 className={`${lusitana.className} text-2xl`}>customers</h1>
       </div>

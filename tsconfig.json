@@ -23,6 +23,6 @@
       "@/*": ["./*"], 
     }
   },
-  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts", "app/ui/orders/create-form.jsx", "app/ui/orders/deletedButton.jsx", "app/ui/dashboard/revenue-chart.tsx"],
+  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts", "app/ui/orders/create-form.jsx", "app/ui/orders/deletedButton.jsx", "app/ui/dashboard/revenue-chart.tsx", "app/ui/Joyride/joyride.jsx"],
   "exclude": ["node_modules"]
 }

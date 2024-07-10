@@ -6,12 +6,13 @@ import { lusitana } from '@/app/ui/fonts';
 import { InvoicesTableSkeleton } from '@/app/ui/skeletons';
 import { Suspense } from 'react';
 import { fetchOrdersPages } from '@/app/lib/data';
-
+import FilterOrder from '@/app/ui/orders/filter';
  
-export default async function Page({searchParams}: {searchParams?: {query?: string,page?: string,deleteId?: string}}) { 
+export default async function Page({searchParams}: {searchParams?: {query?: string,page?: string,deleteId?: string,email?: string}}) { 
   const currentPage=Number(searchParams?.page || 1);
   const deleteId = searchParams?.deleteId || '';
   const query = searchParams?.query || '';
+  const email = searchParams?.email || '';
   const totalPages=await fetchOrdersPages(query);
   return (
     <div className="w-full changerColor" >
@@ -19,11 +20,12 @@ export default async function Page({searchParams}: {searchParams?: {query?: stri
         <h1 className={`${lusitana.className} text-2xl`}>orders</h1>
       </div>
       <div className="mt-4 flex items-center justify-between gap-2 md:mt-8">
-        <Search placeholder="Search invoices..." />
+        <Search placeholder="Search orders..." />
+        <FilterOrder/>
         <CreateInvoice href="/dashboard/orders/create" text="Create Order" />
       </div>
        <Suspense key={query + currentPage} fallback={<InvoicesTableSkeleton />}>
-        <Table query={query} currentPage={currentPage} deleteId={deleteId}/>
+        <Table query={query} currentPage={currentPage} deleteId={deleteId} email={email}/>
       </Suspense>
       <div className="mt-5 flex w-full justify-center">
         <Pagination totalPages={totalPages} />

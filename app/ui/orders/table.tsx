@@ -10,14 +10,14 @@ import Modal from '../modal';
 
 export default async function InvoicesTable({
   query,
-  currentPage,deleteId
+  currentPage,deleteId,email
 }: {
   query: string;
-  currentPage: number;deleteId:string
+  currentPage: number;deleteId:string,email:string
 }) {
 
 
-  const orders = await fetchFilteredOrders(query, currentPage);
+  const orders = await fetchFilteredOrders(query, currentPage,email);
   return (
    <div className="mt-6 flow-root">
       <div className="inline-block min-w-full align-middle">

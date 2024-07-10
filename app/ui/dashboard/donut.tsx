@@ -126,9 +126,7 @@ export default function Donut({
   const centerX = innerWidth / 2;
   const donutThickness = 50;
   let totalOrders = paid + pending + cancel + onRoute;
-  function arrowDirection(data: any) {
-    console.log("------", data);
-  }
+
 
   let datPanel: BrowserUsage[] = [
     {

@@ -1,9 +1,11 @@
 "use client";
 import { ChromePicker } from "react-color";
 import { useEffect, useRef, useState } from "react";
+
+
 const ColorPicker = () => {
   const pickerRef = useRef(null);
- 
+
   const [color, setColor] = useState("rgba(29,33,38,1)");
   const [colorSecondary, setColorSecondary] = useState("rgba(50,75,103,0.3)");
   const [displayColorPicker, setDisplayColorPicker] = useState(false);
@@ -52,7 +54,6 @@ const ColorPicker = () => {
         });
       }
     }
-   
   }, [color]);
 
   return (

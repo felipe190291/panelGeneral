@@ -46,7 +46,7 @@ export function RevenueChartSkeleton() {
 
 export function InvoiceSkeleton() {
   return (
-    <div className="flex flex-row items-center justify-between border-b border-gray-100 py-4">
+    <div className="flex flex-row items-center justify-between border-b border-gray-100 py-4 animate-pulse">
       <div className="flex items-center">
         <div className="mr-2 h-8 w-8 rounded-full bg-gray-200" />
         <div className="min-w-0">
@@ -61,7 +61,7 @@ export function InvoiceSkeleton() {
 
 export function LatestInvoicesSkeleton() {
   return (
-    <div
+    <div role="status" 
       className={`${shimmer} relative flex w-full flex-col overflow-hidden md:col-span-4`}
     >
       <div className="mb-4 h-8 w-36 rounded-md bg-gray-100" />

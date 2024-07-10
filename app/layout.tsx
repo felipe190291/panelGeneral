@@ -3,6 +3,7 @@ import { Inter } from "next/font/google";
 import "./globals.css";
 import { monserrat } from "./ui/fonts";
 
+
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
@@ -20,6 +21,7 @@ export default function RootLayout({
       <body className={`${monserrat.className} antialiased h-screen w-full`}>
         {children}
       </body>
+     
     </html>
   );
 }

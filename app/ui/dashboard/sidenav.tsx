@@ -4,6 +4,7 @@ import { PowerIcon } from "@heroicons/react/24/outline";
 import ColorPicker from "@/app/ui/colorPicker";
 import Image from "next/image";
 
+
 export default function SideNav() {
   return (
     <div className="flex h-full flex-col px-3 py-4 md:px-2 ">
@@ -28,6 +29,7 @@ export default function SideNav() {
           </button>
         </Link>
       </div>
+     
     </div>
   );
 }
