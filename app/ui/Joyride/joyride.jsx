@@ -61,8 +61,14 @@ const Tour = () => {
       type,
     } = data;
     const isPreviousAction = action === "prev";
-
-    if (type === "step:after") {
+    console.log("type----------", type, action);
+    if (type === "tour:end") {
+      setRun(false);
+      setStepIndex(0);
+    } else if (type === "beacon" || action == "close") {
+      setRun(false);
+      setStepIndex(0);
+    } else if (type === "step:after") {
       // if (next == null || previous == null) {
       //   console.log("---", next, previous, index);
       //   setStepIndex(index + (isPreviousAction ? -1 : 1));
@@ -99,6 +105,7 @@ const Tour = () => {
         }
       }
     }
+ 
     // if ([EVENTS.STEP_AFTER, EVENTS.TARGET_NOT_FOUND].includes(type)) {
     //   // Update state to advance the tour
     //   setTimeout(() => {

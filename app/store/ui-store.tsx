@@ -1,4 +1,5 @@
 import { create } from 'zustand'
+import {persist} from 'zustand/middleware'
 
 type Store = {
   count: number,
@@ -7,7 +8,7 @@ type Store = {
   run:boolean,setRun:(run:boolean)=>void
 }
 
-export const useUIStore = create<Store>()((set) => ({
+export const useUIStore = create<Store>()(persist((set) => ({
   count: 1,
   stepIndex:0,
   setStepIndex: (value:any) => set((state) => ({ stepIndex:  value })),
@@ -15,5 +16,7 @@ export const useUIStore = create<Store>()((set) => ({
     run:run,
   })),
   run:false
+}),{
+  name: 'ui-store'
 }))
 
